@@ -1,0 +1,32 @@
+---
+- hostname: name={{ host_name }}
+
+- name: Install common packages
+  yum: name={{ item }} state=present update_cache=yes
+  with_items:
+    - git
+    - vim
+    - curl
+    - yum-utils
+
+- name: Remove older packages
+  yum: name={{ item }} state=absent
+  with_items:
+    - docker
+    - docker-common
+    - docker-selinux
+    - container-selinux
+
+- name: Create new web user
+  user: name={{ sudo_user }} shell=/bin/bash state=present
+  when: app_env != "development"
+
+- name: Create needed folder
+  file: path=/var/www/{{ item }} state=directory owner={{ sudo_user }}
+  with_items:
+    - web
+    - blog
+  when: app_env != "development"
+
+- name: Set timezone to Asia/Ho_Chi_Minh
+  timezone: name=Asia/Ho_Chi_Minh

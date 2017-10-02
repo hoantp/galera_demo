@@ -1,0 +1,10 @@
+---
+- hosts:
+    - docker
+
+  remote_user: "{{ sudo_user }}"
+  become: yes
+
+  roles:
+    - common
+    - docker
